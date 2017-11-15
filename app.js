@@ -1,14 +1,29 @@
-var express = require('express');
-var bodyParser = require('body-parser');
+const express = require('express');
+const bodyParser = require('body-parser');
+const ejs = require('ejs');
+// const path = require('path');
 
-var app = express();
+const index = require('./routes/index.js');
 
-app.set('view-engine', 'ejs');
+const app = express();
+
+// app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static('public'));
+
+app.use('/', index);
+
+//catch our 404s
+app.use((req, res, next) => {
+  var err = new Error('Not Found');
+  err.status = 404;
+  res.status(err.status).render('err');
+})
+
 
 app.listen(8000, function() {
   console.log("Listening on port 8000...");
